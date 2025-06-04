@@ -1,0 +1,31 @@
+class Solution {
+    public int findCircleNum(int[][] isConnected) {
+
+        int num_vertex = isConnected.length;
+        int[] visited = new int[num_vertex];
+        int provinces = 0;
+        for(int node = 0; node < num_vertex; node++){
+            if(visited[node] == 0){
+                provinces += 1;
+                bfs(node, visited, isConnected);
+            }
+        }
+        return provinces;   
+    }
+
+
+    private void bfs(int node, int[] visited, int[][] isConnected){
+        Queue<Integer> queue = new LinkedList<>();
+        visited[node] = 1;
+        queue.offer(node);
+        while(!queue.isEmpty()){
+            int neighNode = queue.remove();
+            for(int neighbour = 0; neighbour < visited.length; neighbour++){
+                if(isConnected[neighNode][neighbour] == 1 && visited[neighbour] == 0){
+                    visited[neighbour] = 1;
+                    queue.offer(neighbour);
+                }
+            }
+        }
+    }
+}
