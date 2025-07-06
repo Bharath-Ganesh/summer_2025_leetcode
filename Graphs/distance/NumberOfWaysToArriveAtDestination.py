@@ -5,43 +5,27 @@ from typing import List
 
 class Solution:
     def countPaths(self, n: int, roads: List[List[int]]) -> int:
-
-        pq = []
-        distance = [float('inf')] * n
-        distance[0] = 0
-        paths = [0] * n
-        paths[0] = 1
-        dist, u = 0, 0
-        heapq.heappush(pq, (dist, u))
-        adj_list = self.construct_adj_list(roads)
-
-        while pq:
-
-            dist, u = heapq.heappop(pq)
-            for v, wt in adj_list[u]:
-                if dist + wt < distance[v]:
-                    paths[v] = paths[u]
-                    distance[v] = dist + wt
-                    heapq.heappush(pq, (distance[v], v))
-                elif dist + wt == distance[v]:
-                    paths[v] += paths[u]
-
-
-        if distance[n - 1] == float('inf'):
-            return -1
-
-        return paths[n - 1]
-
-        # Helper function to build adjacency list
-
-    def construct_adj_list(self, roads: List[List[int]]) -> defaultdict:
-        adj_list = defaultdict(list)
-
-        # Each edge is [u, v, time], add both directions since it's undirected
+        MOD = 10 ** 9 + 7
+        adjList = defaultdict(list)
         for u, v, wt in roads:
-            adj_list[u].append((v, wt))
-            adj_list[v].append((u, wt))
-        return adj_list
+            adjList[u].append((v, wt))
+            adjList[v].append((u, wt))
+
+        distance = [float('inf')] * n
+        num_ways = [0] * n
+        minheap = []
+        heapq.heappush(minheap, (0, 0))
+
+        while minheap:
+            dist, u = heapq.heappop(minheap)
+            for v, wt in adjList[u]:
+                if dist + wt < distance[v]:
+                    distance[v] = dist + wt
+                    num_ways[v] = 1
+                elif dist + wt == distance[v]:
+                    num_ways[v] = (num_ways[v] + num_ways[u]) % MOD
+
+        return -1 if distance[n - 1] == float('inf') else num_ways[n - 1]
 
 if __name__ == '__main__':
     sol = Solution()

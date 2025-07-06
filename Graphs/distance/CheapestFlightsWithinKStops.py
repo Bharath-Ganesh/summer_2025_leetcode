@@ -5,38 +5,68 @@ from typing import List
 
 class Solution:
     def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
+        """
+        n = 4, flights =
+        [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]],
+        src = 0, dst = 3, k = 1
 
-        pq = []
+             0
+        100/   \  100
+          /     \
+         1 -----> 2
+          \ 100 /
+           \   / 200
+         600\ /
+
+
+        STEP 0:
+        (distance, node, k)
+        [0, 0, 0]
+        STEP 1
+        k = 1: (distance, node, k)
+        [(100, 1, 1),]
+         0   1  2   3
+        [0 100 inf inf]
+
+        STEP 2
+        k = 2:
+        (100, 1, 1) => [(200, 2, 2), (700, 3, 2)]
+         0   1  2   3
+        [0 100 200 700]
+
+        STEP 3
+        k = :
+        (100, 1, 1) => [(200, 2, 2), (700, 3, 2)]
+         0   1  2   3
+        [0 100 200 700]
+        """
+
+        minheap = []
+        heapq.heappush(minheap, (0, src, 0))
+        adjList = defaultdict(list)
+        for u, v, w in flights:
+            adjList[u].append((v, w))
+
         distance = [float('inf')] * n
         distance[src] = 0
-        stops, dist, u = 0, 0, src
-        heapq.heappush(pq, (stops, dist, u))
-        adj_list = self.construct_adj_list(flights)
+        while minheap:
+            stops, u, dist = heapq.heappop(minheap)
 
-        while pq:
-            stops, dist, u = heapq.heappop(pq)
             if stops > k:
                 continue
-            for v, wt in adj_list[u]:
-                if distance[u] + wt < distance[v]:
+
+            for v, wt in adjList[u]:
+                if dist + wt < distance[v]:
                     if stops == k and v != dst:
                         continue
-                    distance[v] = distance[u] + wt
-                    heapq.heappush(pq, (stops + 1, distance[v], v))
+                    distance[v] = dist + wt
+                    heapq.heappush(minheap, (stops + 1, v, distance[v]))
 
         if distance[dst] == float('inf'):
             return -1
 
         return distance[dst]
 
-    # Helper function to build adjacency list
-    def construct_adj_list(self, edges: List[List[int]]) -> defaultdict:
-        adj_list = defaultdict(list)
-
-        # Each edge is [u, v, time], add both directions since it's undirected
-        for u, v, wt in edges:
-            adj_list[u].append((v, wt))
-        return adj_list
 
 if __name__ == '__main__':
     s = Solution()

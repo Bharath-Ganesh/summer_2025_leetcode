@@ -1,4 +1,28 @@
 class Solution:
+
+    def climbStairs(self, n: int) -> int:
+        """
+            n - 4
+            1 -> 1
+            2 -> 2
+            3 -> 3
+            4 -> 5
+            5 -> 8
+        """
+
+        if n <= 2:
+            return n
+
+        prev_2 = 1
+        prev = 2
+        possible_ways = 0
+        for ways in range(3, n + 1):
+            possible_ways = prev + prev_2
+            prev_2 = prev
+            prev = possible_ways
+
+        return possible_ways
+
     def climbStairsTabulation(self, n: int) -> int:
 
         dp = [0 for _ in range(n + 1)]
@@ -12,7 +36,7 @@ class Solution:
 
         return dp[n]
 
-    def climbStairs(self, n: int) -> int:
+    def climbStairsRecursion(self, n: int) -> int:
         dp = [-1 for _ in range(n + 1)]
         def dfs():
             if n <= 2:

@@ -34,10 +34,10 @@ if __name__ == '__main__':
     ]
 
 
-    print("Are 1 and 6 connected?", s.areConnected(1, 6))  # True
-    print("Are 1 and 8 connected?", s.areConnected(1, 8))  # True
-    print("Are 4 and 6 connected?", s.areConnected(4, 6))  # True
-    print("Are 5 and 7 connected?", s.areConnected(5, 7))  # True
+    print("Are 1 and 6 connected?", s.areConnected(1, 6))  # False
+    print("Are 1 and 8 connected?", s.areConnected(1, 8))  # False
+    print("Are 4 and 6 connected?", s.areConnected(4, 6))  # False
+    print("Are 5 and 7 connected?", s.areConnected(5, 7))  # False7
 
     for u, v in edges:
         s.unionBySize(u, v)

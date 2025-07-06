@@ -1,56 +1,59 @@
 from collections import defaultdict, deque
 from typing import List
 
+
 class Solution:
-
-
     def foreignDictionary(self, words: List[str]) -> str:
-        adj_list = defaultdict(list)
+        """
+
+
+       ["hrn","hrf","er","enn","rfnn"]
+        n -> f
+        h -> e
+        r -> n
+        e -> r
+        h -> e -> r -> n -> f
+
+
+        hrn
+        hrf
+
+        h->
+        """
+        word_set = set("".join(words))
+        adjList = defaultdict(list)
         indegree = defaultdict(int)
-        all_chars = set(''.join(words))
+        for first_word, second_word in zip(words, words[1:]):
+            for i in range(len(first_word)):
+                if i == len(second_word):
+                    if first_word[:i] == second_word:
+                        return ""
+                    break
 
-        for i in range(len(words) - 1):
-            first = words[i]
-            second = words[i + 1]
-
-            # Fix: Detect invalid prefix case
-            if len(first) > len(second) and first.startswith(second):
-                return ""
-
-            index = self.buildAdjList(first, second)
-            if index != -1:
-                u = first[index]
-                v = second[index]
-                if v not in adj_list[u]:
-                    adj_list[u].append(v)
+                if first_word[i] != second_word[i]:
+                    # n -> f
+                    u = first_word[i]
+                    v = second_word[i]
+                    adjList[u].append(v)
                     indegree[v] += 1
+                    break
 
-        for ch in all_chars:
-            if ch not in indegree:
-                indegree[ch] = 0
+        queue = deque()
+        for ch in word_set:
+            if indegree[ch] == 0:
+                queue.append(ch)
 
-        queue = deque([ch for ch in indegree if indegree[ch] == 0])
-        result = []
-
+        res = []
         while queue:
             ch = queue.popleft()
-            result.append(ch)
-            for neighbor in adj_list[ch]:
-                indegree[neighbor] -= 1
-                if indegree[neighbor] == 0:
-                    queue.append(neighbor)
+            res.append(ch)
+            for adjCh in adjList[ch]:
+                indegree[adjCh] -= 1
+                if not indegree[adjCh]:
+                    queue.append(adjCh)
 
-        if len(result) != len(all_chars):
-            return ""  # cycle detected
+        return "".join(res) if len(res) == len(word_set) else ""
 
-        return ''.join(result)
-
-    def buildAdjList(self, first_word, second_word):
-        length = min(len(first_word), len(second_word))
-        for i in range(length):
-            if first_word[i] != second_word[i]:
-                return i
-        return -1
 
 if __name__ == '__main__':
     s = Solution()
